@@ -39,7 +39,11 @@ async function GetRandomBlock() {
 }
 
 async function LogRollResult(CharacterName, block, DiceResult, Attribute) {
-  console.log(`${CharacterName} sorteou um dado de ${block}: ${DiceResult} + ${Attribute} = ${DiceResult + Attribute}`);
+  console.log(
+    `${CharacterName} sorteou um dado de ${block}: ${DiceResult} + ${Attribute} = ${
+      DiceResult + Attribute
+    }`
+  );
 }
 
 async function playRaceEngine() {
@@ -54,7 +58,7 @@ async function playRaceEngine() {
     let DiceResult1 = await RollDice();
     let DiceResult2 = await RollDice();
 
-    // Teste de habilidade:                         
+    // Teste de habilidade:
     let TotalTestSkill1 = 0;
     let TotalTestSkill2 = 0;
     if (block === "RETA") {
@@ -93,18 +97,66 @@ async function playRaceEngine() {
     if (block === "CONFRONTO") {
       let PowerResult1 = DiceResult1 + player1.PODER;
       let PowerResult2 = DiceResult2 + player2.PODER;
+
+      console.log(`${player1.NOME} confrontou ${player2.NOME}! 🥊`);
+
+      await LogRollResult(player1.NOME, "PODER", DiceResult1, player1.PODER);
+
+      await LogRollResult(player2.NOME, "PODER", DiceResult2, player2.PODER);
+
+      // If Ternario:
+      // É possível fazer assim:
+      // player2.PONTOS -=
+      // PowerResult1 > PowerResult2 &&(and) player2.PONTOS > 0 ? 1 : 0;
+
+      // If Combinado:
+      // (PowerResult1 > PowerResult2 &&(and) player2.PONTOS > 0){
+      //  player2.PONTOS--
+      // }
+
+      if (PowerResult1 > PowerResult2) {
+        if (player2.PONTOS > 0) {
+          player2.PONTOS--;
+          console.log(
+            `${player1.NOME} Venceu o confronto! ${player2.NOME} perdeu 1 ponto!`
+          );
+        }
+      }
+      if (PowerResult2 > PowerResult1) {
+        if (player1.PONTOS > 0) {
+          player1.PONTOS--;
+          console.log(
+            `${player2.NOME} Venceu o confronto! ${player1.NOME} perdeu 1 ponto!`
+          );
+        }
+      } else {
+        console.log("Confronto empatado. Ninguém perdeu ponto!");
+      }
     }
 
-      // Verifica o vencedor.
-    if (TotalTestSkill1 > TotalTestSkill2){
-      console.log(`${player1.NOME} marcou um ponto!`)
+    // Verifica o vencedor.
+    if (TotalTestSkill1 > TotalTestSkill2) {
+      console.log(`${player1.NOME} marcou um ponto!`);
       player1.PONTOS++;
-    }
-    else if (TotalTestSkill1 < TotalTestSkill2){
-      console.log(`${player2.NOME} marcou um ponto!`)
+    } else if (TotalTestSkill1 < TotalTestSkill2) {
+      console.log(`${player2.NOME} marcou um ponto!`);
       player2.PONTOS++;
     }
-    console.log("----------------------------------")
+    console.log("----------------------------------");
+  }
+}
+
+async function DeclareWinner(char1, char2) {
+  console.log("🏁 Resultado Final:");
+  console.log(`${player1.NOME}: ${player1.PONTOS} ponto(s)!`);
+  console.log(`${player2.NOME}: ${player2.PONTOS} ponto(s)!`);
+
+  if (player1.PONTOS > player2.PONTOS) {
+    console.log(`\n ${player1.NOME} Venceu a corrida! Parabéns!`);
+  } else if (player2.PONTOS > player1.PONTOS) {
+    console.log(`\n ${player2.NOME} Venceu a corrida! Parabéns!`);
+  } else {
+    console.log(`\n Houve um empate!`);
   }
 }
 
@@ -112,6 +164,7 @@ async function playRaceEngine() {
   console.log(
     `🏁 A corrida entre ${player1.NOME} e ${player2.NOME} está começando!🏁 \n`
   );
-  playRaceEngine();
+  await playRaceEngine();
+  await DeclareWinner();
 })();
 // Fazemos uma função autoinvocada. É como se declarassemos e logo em seguida chamassemos ela.
