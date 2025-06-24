@@ -39,7 +39,7 @@ async function GetRandomBlock() {
 }
 
 async function LogRollResult(CharacterName, block, DiceResult, Attribute) {
-  console.log(`${CharacterName} sorteou um dado de ${block}: ${DiceResult}`);
+  console.log(`${CharacterName} sorteou um dado de ${block}: ${DiceResult} + ${Attribute} = ${DiceResult + Attribute}`);
 }
 
 async function playRaceEngine() {
@@ -54,7 +54,7 @@ async function playRaceEngine() {
     let DiceResult1 = await RollDice();
     let DiceResult2 = await RollDice();
 
-    // Teste de habilidade:
+    // Teste de habilidade:                         
     let TotalTestSkill1 = 0;
     let TotalTestSkill2 = 0;
     if (block === "RETA") {
@@ -94,6 +94,17 @@ async function playRaceEngine() {
       let PowerResult1 = DiceResult1 + player1.PODER;
       let PowerResult2 = DiceResult2 + player2.PODER;
     }
+
+      // Verifica o vencedor.
+    if (TotalTestSkill1 > TotalTestSkill2){
+      console.log(`${player1.NOME} marcou um ponto!`)
+      player1.PONTOS++;
+    }
+    else if (TotalTestSkill1 < TotalTestSkill2){
+      console.log(`${player2.NOME} marcou um ponto!`)
+      player2.PONTOS++;
+    }
+    console.log("----------------------------------")
   }
 }
 
